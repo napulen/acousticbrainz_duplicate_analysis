@@ -1,3 +1,7 @@
+# Ignore the original duplication datasets
+ab-duplicates100-2016-03-02/
+ab-duplicates1000-2016-03-02/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
