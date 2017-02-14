@@ -11,10 +11,11 @@ taken from the dataset. This is later used to compare to a new duplication.
 import os
 import json
 from natsort import natsorted
+import numpy as np
 
 smalldataset = 'ab-duplicates100-2016-03-02'
 largedataset = 'ab-duplicates1000-2016-03-02'
-dataset = largedataset
+dataset = smalldataset
 
 reduceddataset = '{}_reduced'.format(dataset)
 averagesfile = '{}_averages.json'.format(dataset)
@@ -28,29 +29,29 @@ averages = {}
 def compute_averages(d):
     averages = {}
     # Getting length
-    averages['length'] = sum(d['length'])/float(len(d['length']))
+    averages['length'] = {'mean':np.mean(d['length']), 'std':np.std(d['length'])}
     # Getting replay_gain
-    averages['replay_gain'] = sum(d['replay_gain'])/float(len(d['replay_gain']))
+    averages['replay_gain'] = {'mean':np.mean(d['replay_gain']), 'std':np.std(d['replay_gain'])}
     # Getting average_loudness
-    averages['average_loudness'] = sum(d['average_loudness'])/float(len(d['average_loudness']))
+    averages['average_loudness'] = {'mean':np.mean(d['average_loudness']), 'std':np.std(d['average_loudness'])}
     # Getting bpm
-    averages['bpm'] = sum(d['bpm'])/float(len(d['bpm']))
+    averages['bpm'] = {'mean':np.mean(d['bpm']), 'std':np.std(d['bpm'])}
     # Getting onset_rate
-    averages['onset_rate'] = sum(d['onset_rate'])/float(len(d['onset_rate']))
+    averages['onset_rate'] = {'mean':np.mean(d['onset_rate']), 'std':np.std(d['onset_rate'])}
     # Getting beats_count
-    averages['beats_count'] = sum(d['beats_count'])/len(d['beats_count'])
+    averages['beats_count'] = {'mean':np.mean(d['beats_count']), 'std':np.std(d['beats_count'])}
     # Getting chords_histogram
-    averages['chords_histogram'] = [sum(x)/float(len(x)) for x in d['chords_histogram']]
+    averages['chords_histogram'] = [{'mean':np.mean(x), 'std':np.std(x)} for x in d['chords_histogram']]
     # Getting hpcp_mean
-    averages['hpcp_mean'] = [sum(x)/float(len(x)) for x in d['hpcp_mean']]
+    averages['hpcp_mean'] = [{'mean':np.mean(x), 'std':np.std(x)} for x in d['hpcp_mean']]
     # Getting key_key
     averages['key_key'] = max(set(d['key_key']), key=d['key_key'].count)
     # Getting key_scale
     averages['key_scale'] = max(set(d['key_scale']), key=d['key_scale'].count)
     # Getting key_strength
-    averages['key_strength'] = sum(d['key_strength'])/float(len(d['key_strength']))
+    averages['key_strength'] = {'mean':np.mean(d['key_strength']), 'std':np.std(d['key_strength'])}
     # Getting tuning_frequency
-    averages['tuning_frequency'] = sum(d['tuning_frequency'])/float(len(d['tuning_frequency']))
+    averages['tuning_frequency'] = {'mean':np.mean(d['tuning_frequency']), 'std':np.std(d['tuning_frequency'])}
     return averages
 
 for f in files:

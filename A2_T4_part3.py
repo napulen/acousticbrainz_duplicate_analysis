@@ -59,26 +59,25 @@ def comparisonfeatures(dupjson):
     features['tuning_frequency'] = dupjson['tonal']['tuning_frequency']
     return features
 
-def generatesimilarityvector(d):
-    v = np.array([])
+def computesimilarity(mbid, d):
+    score = 0.0
     for key in sorted(d):
         if key == 'hpcp_mean' or key == 'chords_histogram':
-            for i in d[key]:
-                v = np.append(v, i)
-        elif key == 'key_key':
-            '''asd'''
-        elif key == 'key_scale':
-            '''asd'''
+            inc = 1.0/len(d[key])
+            for i,x in enumerate(d[key]):
+                mean = averages[mbid][key][i]['mean']
+                std = averages[mbid][key][i]['std']
+                if abs(x-mean) > std:
+                    score = score + inc
+        elif key == 'key_key' or key == 'key_scale':
+            if averages[mbid][key] != d[key]:
+                score = score + 1
         else:
-            v = np.append(v, d[key])
-    return v
-
-
-def computesimilarity(mbid, d):
-    dupvector = generatesimilarityvector(d)
-    avgvector = generatesimilarityvector(averages[mbid])
-    print '{} {}'.format(mbid, np.linalg.norm(dupvector-avgvector))
-    ### Compute similarity
+            mean = averages[mbid][key]['mean']
+            std = averages[mbid][key]['std']
+            if abs(mean-d[key]) > std:
+                score = score + 1
+    return score/float(len(d))
 
 # Load every file from the provided dataset
 for folder in os.listdir(dataset):
@@ -93,4 +92,5 @@ for folder in os.listdir(dataset):
         with open(duplicatepath) as f:
             data = json.load(f)
             dupdict = comparisonfeatures(data)
-            similarity = computesimilarity(mbid, dupdict)
+            score = computesimilarity(mbid, dupdict)
+            print '{} - {}'.format(duplicate,score)
